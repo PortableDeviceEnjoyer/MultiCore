@@ -53,7 +53,7 @@ list(APPEND PCH_SKIP_SOURCE
     ${CMAKE_CURRENT_BINARY_DIR}/winreg_c.c)
 
 # This static library is for kernelbase and vista APIs in kernel32
-add_library(win32_registry
+add_library(win32_registry STATIC
     ${PCH_SKIP_SOURCE}
     reg/hkcr.c
     reg/reg.c
