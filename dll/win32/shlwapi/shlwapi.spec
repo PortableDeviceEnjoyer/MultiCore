@@ -659,6 +659,8 @@
 @ stdcall PathMakeSystemFolderA(str)
 @ stdcall PathMakeSystemFolderW(wstr)
 @ stdcall PathMatchSpecA(str str)
+@ stdcall -version=0x600 PathMatchSpecExA(str str long)
+@ stdcall -version=0x600 PathMatchSpecExW(wstr wstr long)
 @ stdcall PathMatchSpecW(wstr wstr)
 @ stdcall PathParseIconLocationA(str)
 @ stdcall PathParseIconLocationW(wstr)
