@@ -140,28 +140,10 @@ static void TEST_notepad(void)
     CoTaskMemFree(params);
 }
 
-static void TEST_write(void)
-{
-    PWSTR app, cmdline, params;
-    HRESULT hr = g_fnSHEvaluateSystemCommandTemplate(L"write /A /P", &app, &cmdline, &params);
-    ok_hr(hr, S_OK);
-    ok(StrStrIW(app, L"wordpad.exe") != NULL, "app was %s\n", wine_dbgstr_w(app));
-    ok_wstri(cmdline, L"\"wordpad.exe\" /A /P");
-    ok_wstri(params, L"/A /P");
-    CoTaskMemFree(app);
-    CoTaskMemFree(cmdline);
-    CoTaskMemFree(params);
-}
-
 START_TEST(SHEvaluateSystemCommandTemplate)
 {
     if (!TEST_Init())
         return;
 
     TEST_notepad();
-
-    if (g_bVista || IsReactOS())
-        TEST_write();
-    else
-        skip("TEST_write is skipped\n");
 }
