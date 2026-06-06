@@ -23,7 +23,7 @@ static PCWSTR _PathGetArgsLikeCreateProcess(PCWSTR lpString)
     PCWSTR pch;
     if (*lpString == L'"')
     {
-        pch = wcschr(lpString + 1, L'"');
+        pch = StrChrW(lpString + 1, L'"');
         if (pch)
         {
             ++pch;
@@ -34,7 +34,7 @@ static PCWSTR _PathGetArgsLikeCreateProcess(PCWSTR lpString)
     }
     else
     {
-        pch = wcschr(lpString, L' ');
+        pch = StrChrW(lpString, L' ');
         if (pch)
             return pch + 1;
     }
@@ -54,7 +54,7 @@ static BOOL _PathMatchesSuspicious(PCWSTR lpString)
     WCHAR pszPath[MAX_PATH];
     SHGetFolderPathW(NULL, CSIDL_PROGRAM_FILES, NULL, 0, pszPath);
     INT cch = lstrlenW(pszPath);
-    return _wcsnicmp(lpString, pszPath, cch) == 0;
+    return StrCmpNIW(lpString, pszPath, cch) == 0;
 }
 
 // This function attempts to find where the "arguments" portion of a command-line path string
