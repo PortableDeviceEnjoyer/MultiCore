@@ -7,6 +7,7 @@
 
 #include "shelltest.h"
 #include <strsafe.h>
+#include <versionhelpers.h>
 
 typedef HRESULT (WINAPI *FN_SHEvaluateSystemCommandTemplate)(PCWSTR, PWSTR*, PWSTR*, PWSTR*);
 static FN_SHEvaluateSystemCommandTemplate g_fnSHEvaluateSystemCommandTemplate = NULL;
@@ -158,5 +159,9 @@ START_TEST(SHEvaluateSystemCommandTemplate)
         return;
 
     TEST_notepad();
-    TEST_write();
+
+    if (g_bVista || IsReactOS())
+        TEST_write();
+    else
+        skip("TEST_write is skipped\n");
 }
