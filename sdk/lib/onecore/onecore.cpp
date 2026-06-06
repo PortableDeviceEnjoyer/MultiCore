@@ -57,7 +57,7 @@ static BOOL _PathMatchesSuspicious(PCWSTR lpString)
 // This function attempts to find where the "arguments" portion of a command-line path string
 static PCWSTR _PathGuessNextBestArgs(PCWSTR pszPath)
 {
-    PWSTR pSpaceStart = NULL;
+    PCWSTR pSpaceStart = NULL;
     BOOL bValid = TRUE;
     const DWORD PATH_VALID_CHARS = (
         PATH_CHAR_CLASS_DOT | PATH_CHAR_CLASS_SEMICOLON | PATH_CHAR_CLASS_COMMA |
@@ -149,11 +149,14 @@ static BOOL _GetAppPath(PCWSTR pszPath, PWSTR pszValue, DWORD cchValue)
     return error == ERROR_SUCCESS;
 }
 
-static HRESULT _PathExeExists(LPWSTR pszPath)
+static HRESULT _PathExeExists(_In_ PCWSTR pszPath)
 {
+    WCHAR szPath[MAX_PATH];
+    StringCchCopyW(szPath, _countof(szPath), pszPath);
+
     DWORD dwWhich = WHICH_PIF | WHICH_COM | WHICH_EXE | WHICH_BAT | WHICH_CMD | WHICH_OPTIONAL;
     DWORD attrs;
-    if (!PathFileExistsDefExtAndAttributesW(pszPath, dwWhich, &attrs) ||
+    if (!PathFileExistsDefExtAndAttributesW(szPath, dwWhich, &attrs) ||
         (attrs & FILE_ATTRIBUTE_DIRECTORY))
     {
         return CO_E_APPNOTFOUND;
@@ -161,35 +164,35 @@ static HRESULT _PathExeExists(LPWSTR pszPath)
     return S_OK;
 }
 
-static HRESULT _PathFindInFolder(INT csidl, STRSAFE_LPCWSTR pszSrc, LPWSTR pszPath, size_t cchDest)
+static HRESULT
+_PathFindInFolder(_In_ INT csidl, _In_ PCWSTR pszSrc, _Out_ PWSTR pszPath, _In_ UINT cchPath)
 {
-    HRESULT hr = SHGetFolderPathW(0, csidl, 0, 0, pszPath);
+    WCHAR szDir[MAX_PATH];
+    HRESULT hr = SHGetFolderPathW(0, csidl, 0, 0, szDir);
     if (FAILED(hr))
         return hr;
 
-    StringCchCatW(pszPath, cchDest, L"\\");
-    hr = StringCchCatW(pszPath, cchDest, pszSrc);
+    StringCchCopyW(pszPath, cchPath, szDir);
+    StringCchCatW(pszPath, cchPath, L"\\");
+    hr = StringCchCatW(pszPath, cchPath, pszSrc);
     if (FAILED(hr))
         return hr;
 
     return _PathExeExists(pszPath);
 }
 
-static HRESULT _PathFindInSystem(PWSTR pszPath, UINT cchPath)
+static HRESULT _PathFindInSystem(_Inout_ PWSTR pszPath, _In_ UINT cchPath)
 {
     WCHAR szPath[MAX_PATH];
     HRESULT hr = _PathFindInFolder(CSIDL_SYSTEM, pszPath, szPath, _countof(szPath));
-    if (SUCCEEDED(hr))
-        return StringCchCopyW(pszPath, cchPath, szPath);
-
-    hr = _PathFindInFolder(CSIDL_WINDOWS, pszPath, szPath, 260u);
+    if (FAILED(hr))
+        hr = _PathFindInFolder(CSIDL_WINDOWS, pszPath, szPath, _countof(szPath));
     if (FAILED(hr))
         return hr;
-
     return StringCchCopyW(pszPath, cchPath, szPath);
 }
 
-static inline BOOL PathIsAbsolute(LPCWSTR pszPath)
+static inline BOOL PathIsAbsolute(PCWSTR pszPath)
 {
     return PathIsUNCW(pszPath) || (PathGetDriveNumberW(pszPath) != -1 && pszPath[2] == L'\\');
 }
@@ -209,7 +212,7 @@ SHEvaluateSystemCommandTemplate(
     _Outptr_opt_ PWSTR *ppszParameters)
 {
     HRESULT hr;
-    WCHAR szExe[MAX_PATH];
+    WCHAR szExe[MAX_PATH], szProgram[MAX_PATH];
     PCWSTR pszArgs = _PathGetArgsLikeCreateProcess(pszCmdTemplate);
     BOOL bQuoted;
 
@@ -222,6 +225,8 @@ SHEvaluateSystemCommandTemplate(
     bQuoted = (szExe[0] == L'"');
     if (bQuoted)
         PathUnquoteSpacesW(szExe);
+
+    StringCchCopyW(szProgram, _countof(szProgram), szExe);
 
     if (PathIsAbsolute(szExe))
     {
@@ -265,6 +270,7 @@ SHEvaluateSystemCommandTemplate(
 
         if (_GetAppPath(szExe, szExe, _countof(szExe)))
         {
+            StringCchCopyW(szProgram, _countof(szProgram), PathFindFileNameW(szExe));
             hr = S_OK;
         }
         else if (SHWindowsPolicy(POLID_UsePathEnvVarForCommandTemplates, FALSE))
@@ -278,8 +284,6 @@ SHEvaluateSystemCommandTemplate(
         {
             hr = _PathFindInSystem(szExe, _countof(szExe));
         }
-
-        pszArgs = PathFindFileNameW(szExe);
     }
 
 Exit:
@@ -298,10 +302,10 @@ Exit:
 
     if (SUCCEEDED(hr) && ppszCommandLine)
     {
-        size_t cch = lstrlenW(szExe) + lstrlenW(pszArgs) + 8;
+        size_t cch = lstrlenW(szProgram) + lstrlenW(pszArgs) + 8;
         hr = SHCoAlloc(cch * sizeof(WCHAR), (PVOID*)ppszCommandLine);
         if (SUCCEEDED(hr))
-            hr = StringCchPrintfW(*ppszCommandLine, cch, L"\"%s\" %s", szExe, pszArgs);
+            hr = StringCchPrintfW(*ppszCommandLine, cch, L"\"%s\" %s", szProgram, pszArgs);
     }
 
     if (SUCCEEDED(hr) && ppszParameters)

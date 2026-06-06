@@ -26,7 +26,10 @@ static BOOL TEST_Init(void)
     g_fnSHEvaluateSystemCommandTemplate = (FN_SHEvaluateSystemCommandTemplate)
         GetProcAddress(hSHLWAPI, MAKEINTRESOURCEA(552));
     if (g_fnSHEvaluateSystemCommandTemplate)
+    {
+        trace("shlwapi has SHEvaluateSystemCommandTemplate\n");
         return TRUE;
+    }
 
     skip("SHEvaluateSystemCommandTemplate not found\n");
     return FALSE;
@@ -43,7 +46,7 @@ static void TEST_notepad(void)
     StringCchCatW(szNotepad, _countof(szNotepad), L"\\notepad.exe");
     StringCchPrintfW(szAnswer1, _countof(szAnswer1), L"\"%s\"", szNotepad);
     StringCchPrintfW(szAnswer2, _countof(szAnswer2), L"\"%s\" ", szNotepad);
-    StringCchPrintfW(szAnswer3, _countof(szAnswer2), L"\"%s\" /A /P", szNotepad);
+    StringCchPrintfW(szAnswer3, _countof(szAnswer3), L"\"%s\" /A /P", szNotepad);
 
     hr = g_fnSHEvaluateSystemCommandTemplate(L"notepad.exe", &app, NULL, NULL);
     ok_hr(hr, S_OK);
@@ -136,10 +139,24 @@ static void TEST_notepad(void)
     CoTaskMemFree(params);
 }
 
+static void TEST_write(void)
+{
+    PWSTR app, cmdline, params;
+    HRESULT hr = g_fnSHEvaluateSystemCommandTemplate(L"write /A /P", &app, &cmdline, &params);
+    ok_hr(hr, S_OK);
+    ok(StrStrIW(app, L"wordpad.exe") != NULL, "app was %s\n", wine_dbgstr_w(app));
+    ok_wstri(cmdline, L"\"wordpad.exe\" /A /P");
+    ok_wstri(params, L"/A /P");
+    CoTaskMemFree(app);
+    CoTaskMemFree(cmdline);
+    CoTaskMemFree(params);
+}
+
 START_TEST(SHEvaluateSystemCommandTemplate)
 {
     if (!TEST_Init())
         return;
 
     TEST_notepad();
+    TEST_write();
 }
