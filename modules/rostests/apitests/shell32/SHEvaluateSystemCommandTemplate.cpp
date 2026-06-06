@@ -14,6 +14,24 @@ static FN_SHEvaluateSystemCommandTemplate g_fnSHEvaluateSystemCommandTemplate = 
 #define ok_wstri(x, y) \
     ok(lstrcmpiW(x, y) == 0, "Wrong string. Expected %s, got %s\n", wine_dbgstr_w(y), wine_dbgstr_w(x))
 
+static BOOL TEST_Init(void)
+{
+    HINSTANCE hShell32 = GetModuleHandleA("shell32");
+    g_fnSHEvaluateSystemCommandTemplate = (FN_SHEvaluateSystemCommandTemplate)
+        GetProcAddress(hShell32, "SHEvaluateSystemCommandTemplate");
+    if (g_fnSHEvaluateSystemCommandTemplate)
+        return TRUE;
+
+    HINSTANCE hSHLWAPI = GetModuleHandleA("shlwapi");
+    g_fnSHEvaluateSystemCommandTemplate = (FN_SHEvaluateSystemCommandTemplate)
+        GetProcAddress(hSHLWAPI, MAKEINTRESOURCEA(552));
+    if (g_fnSHEvaluateSystemCommandTemplate)
+        return TRUE;
+
+    skip("SHEvaluateSystemCommandTemplate not found\n");
+    return FALSE;
+}
+
 static void TEST_notepad(void)
 {
     PWSTR app, cmdline, params;
@@ -120,15 +138,8 @@ static void TEST_notepad(void)
 
 START_TEST(SHEvaluateSystemCommandTemplate)
 {
-    HINSTANCE hShell32 = GetModuleHandleA("shell32");
-    g_fnSHEvaluateSystemCommandTemplate = (FN_SHEvaluateSystemCommandTemplate)
-        GetProcAddress(hShell32, "SHEvaluateSystemCommandTemplate");
-
-    if (!g_fnSHEvaluateSystemCommandTemplate)
-    {
-        skip("SHEvaluateSystemCommandTemplate not found\n");
+    if (!TEST_Init())
         return;
-    }
 
     TEST_notepad();
 }
