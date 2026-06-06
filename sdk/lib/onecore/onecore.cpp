@@ -301,7 +301,7 @@ Exit:
 
     if (SUCCEEDED(hr) && ppszCommandLine)
     {
-        size_t cch = lstrlenW(szProgram) + lstrlenW(pszArgs) + 8;
+        size_t cch = lstrlenW(szProgram) + lstrlenW(pszArgs) + 4; // 4: '"', '"', ' ', NUL
         hr = SHCoAlloc(cch * sizeof(WCHAR), (PVOID*)ppszCommandLine);
         if (SUCCEEDED(hr))
             hr = StringCchPrintfW(*ppszCommandLine, cch, L"\"%s\" %s", szProgram, pszArgs);
