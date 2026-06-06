@@ -185,6 +185,7 @@ static inline BOOL PathIsAbsolute(LPCWSTR pszPath)
 
 /*************************************************************************
  * SHEvaluateSystemCommandTemplate [SHELL32.482] (Vista+)
+ * SHEvaluateSystemCommandTemplate [SHLWAPI.552] (XP SP1 and SP2)
  *
  * https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shevaluatesystemcommandtemplate
  */
