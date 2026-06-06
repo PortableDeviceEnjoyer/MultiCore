@@ -14,16 +14,27 @@
 #include <shlwapi_undoc.h>
 #include <strsafe.h>
 
-static PWSTR _PathGetArgsLikeCreateProcess(PCWSTR lpString)
+static PCWSTR _PathGetArgsLikeCreateProcess(PCWSTR lpString)
 {
-    PWSTR pch;
+    PCWSTR pch;
     if (*lpString == L'"')
+    {
         pch = wcschr(lpString + 1, L'"');
+        if (pch)
+        {
+            ++pch;
+            if (*pch == L' ')
+                ++pch;
+            return pch;
+        }
+    }
     else
+    {
         pch = wcschr(lpString, L' ');
-    if (pch)
-        return pch + 1;
-    return (PWSTR)&lpString[lstrlenW(lpString)];
+        if (pch)
+            return pch + 1;
+    }
+    return &lpString[lstrlenW(lpString)];
 }
 
 static HRESULT _PathCopyExeAndTrim(PWSTR pszBuff, size_t cchBuff, PCWSTR pszSrc, size_t cchSrc)
@@ -38,8 +49,8 @@ static HRESULT _PathCopyExeAndTrim(PWSTR pszBuff, size_t cchBuff, PCWSTR pszSrc,
 static BOOL _PathMatchesSuspicious(PCWSTR lpString)
 {
     WCHAR pszPath[MAX_PATH];
-    INT cch = lstrlenW(lpString);
     SHGetFolderPathW(NULL, CSIDL_PROGRAM_FILES, NULL, 0, pszPath);
+    INT cch = lstrlenW(pszPath);
     return _wcsnicmp(lpString, pszPath, cch) == 0;
 }
 
@@ -199,7 +210,7 @@ SHEvaluateSystemCommandTemplate(
 {
     HRESULT hr;
     WCHAR szExe[MAX_PATH];
-    PWSTR pszArgs = _PathGetArgsLikeCreateProcess(pszCmdTemplate);
+    PCWSTR pszArgs = _PathGetArgsLikeCreateProcess(pszCmdTemplate);
     BOOL bQuoted;
 
     UINT cchArgs = (UINT)(pszArgs - pszCmdTemplate);
@@ -221,7 +232,7 @@ SHEvaluateSystemCommandTemplate(
         else // Not quoted
         {
             if (_PathMatchesSuspicious(szExe)) // ProgramFiles-likely?
-                hr = E_ACCESSDENIED;
+                hr = HRESULT_FROM_WIN32(ERROR_PATH_NOT_FOUND);
             else
                 hr = _PathExeExists(szExe);
         }
@@ -278,9 +289,8 @@ Exit:
     if (ppszParameters)
         *ppszParameters = NULL;
 
-    static WCHAR szEmpty[] = L"";
     if (!pszArgs)
-        pszArgs = szEmpty;
+        pszArgs = L"";
 
     // Create output strings
     if (SUCCEEDED(hr))
@@ -288,7 +298,7 @@ Exit:
 
     if (SUCCEEDED(hr) && ppszCommandLine)
     {
-        size_t cch = lstrlenW(szExe) + lstrlenW(pszArgs) + 4;
+        size_t cch = lstrlenW(szExe) + lstrlenW(pszArgs) + 8;
         hr = SHCoAlloc(cch * sizeof(WCHAR), (PVOID*)ppszCommandLine);
         if (SUCCEEDED(hr))
             hr = StringCchPrintfW(*ppszCommandLine, cch, L"\"%s\" %s", szExe, pszArgs);
@@ -309,6 +319,11 @@ Exit:
         {
             CoTaskMemFree(*ppszCommandLine);
             *ppszCommandLine = NULL;
+        }
+        if (ppszParameters && *ppszParameters)
+        {
+            CoTaskMemFree(*ppszParameters);
+            *ppszParameters = NULL;
         }
     }
 
