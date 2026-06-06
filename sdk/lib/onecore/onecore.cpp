@@ -14,6 +14,10 @@
 #include <shlwapi_undoc.h>
 #include <strsafe.h>
 
+#if TRUE || (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
+    #define USE_APPPATH
+#endif
+
 static PCWSTR _PathGetArgsLikeCreateProcess(PCWSTR lpString)
 {
     PCWSTR pch;
@@ -129,6 +133,8 @@ static inline BOOL _PathAppend(PCWSTR key1, PCWSTR key2, PWSTR pszDest, size_t c
            SUCCEEDED(StringCchCatW(pszDest, cchDest, key2));
 }
 
+#ifdef USE_APPPATH
+
 static VOID _MakeAppPathKey(PCWSTR pszPath, PWSTR pszDest, UINT cchDest)
 {
     if (_PathAppend(L"Software\\Microsoft\\Windows\\CurrentVersion\\App Paths",
@@ -147,6 +153,8 @@ static BOOL _GetAppPath(PCWSTR pszPath, PWSTR pszValue, DWORD cchValue)
     LSTATUS error = SHGetValueW(HKEY_LOCAL_MACHINE, szSubKey, NULL, NULL, pszValue, &cbData);
     return error == ERROR_SUCCESS;
 }
+
+#endif // def USE_APPPATH
 
 static HRESULT _PathExeExists(_In_ PCWSTR pszPath)
 {
@@ -267,12 +275,15 @@ SHEvaluateSystemCommandTemplate(
             goto Exit;
         }
 
+#ifdef USE_APPPATH
         if (_GetAppPath(szExe, szExe, _countof(szExe)))
         {
             StringCchCopyW(szProgram, _countof(szProgram), PathFindFileNameW(szExe));
             hr = S_OK;
         }
-        else if (SHWindowsPolicy(POLID_UsePathEnvVarForCommandTemplates, FALSE))
+        else
+#endif
+        if (SHWindowsPolicy(POLID_UsePathEnvVarForCommandTemplates, FALSE))
         {
             const DWORD PATH_VALID_CHARS = (
                 PATH_CHAR_CLASS_DOT | PATH_CHAR_CLASS_SEMICOLON | PATH_CHAR_CLASS_COMMA |
