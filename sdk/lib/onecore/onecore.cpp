@@ -55,7 +55,7 @@ static BOOL _PathMatchesSuspicious(PCWSTR lpString)
 }
 
 // This function attempts to find where the "arguments" portion of a command-line path string
-static PWSTR _PathGuessNextBestArgs(PWSTR pszPath)
+static PCWSTR _PathGuessNextBestArgs(PCWSTR pszPath)
 {
     PWSTR pSpaceStart = NULL;
     BOOL bValid = TRUE;
