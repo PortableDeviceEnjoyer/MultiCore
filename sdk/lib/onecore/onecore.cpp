@@ -39,8 +39,7 @@ static PCWSTR _PathGetArgsLikeCreateProcess(PCWSTR lpString)
 
 static HRESULT _PathCopyExeAndTrim(PWSTR pszBuff, size_t cchBuff, PCWSTR pszSrc, size_t cchSrc)
 {
-    *pszBuff = UNICODE_NULL;
-    HRESULT hr = StringCchCatNW(pszBuff, cchBuff, pszSrc, cchSrc);
+    HRESULT hr = StringCchCopyNW(pszBuff, cchBuff, pszSrc, cchSrc);
     if (SUCCEEDED(hr))
         StrTrimW(pszBuff, L" \t");
     return hr;
@@ -242,7 +241,7 @@ SHEvaluateSystemCommandTemplate(
                 hr = _PathExeExists(szExe);
         }
 
-        // Detect the best position
+        // Detect the best arguments position
         while (FAILED(hr))
         {
             if (bQuoted || !*pszArgs)
