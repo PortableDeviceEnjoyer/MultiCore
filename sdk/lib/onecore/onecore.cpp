@@ -1,7 +1,7 @@
 /*
  * PROJECT:     ReactOS OneCore
  * LICENSE:     LGPL-2.1+ (https://spdx.org/licenses/LGPL-2.1+)
- * PURPOSE:     OneCore API
+ * PURPOSE:     API level compatibility cushion
  * COPYRIGHT:   Copyright 2026 Katayama Hirofumi MZ <katayama.hirofumi.mz@gmail.com>
  */
 
