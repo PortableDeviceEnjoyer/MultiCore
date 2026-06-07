@@ -77,6 +77,15 @@ static void TEST_notepad(void)
     CoTaskMemFree(app);
     CoTaskMemFree(params);
 
+    hr = g_fnSHEvaluateSystemCommandTemplate(L"system32\\notepad.exe", &app, &cmdline, &params);
+    ok_hr(hr, E_ACCESSDENIED);
+    ok(app == NULL, "app was %s\n", wine_dbgstr_w(app));
+    ok(cmdline == NULL, "cmdline was %s\n", wine_dbgstr_w(cmdline));
+    ok(params == NULL, "params was %s\n", wine_dbgstr_w(params));
+    CoTaskMemFree(app);
+    CoTaskMemFree(cmdline);
+    CoTaskMemFree(params);
+
     hr = g_fnSHEvaluateSystemCommandTemplate(L"notepad.exe /A /P", &app, &cmdline, &params);
     ok_hr(hr, S_OK);
     ok_wstri(app, szNotepad);
