@@ -410,7 +410,9 @@ static const PRODUCT_OPTION_DATA s_ProductOptionData[INSTALLATION_TYPE_MAX] =
 {
     { L"Terminal Server\0", L"ServerNT", 0, 0x200, 0 },
     { L"\0", L"WinNT", 1, 0x300, 1 },
-    { L"Terminal Server\0", L"ServerNT", 0, 0x200, 0 }
+    { L"Terminal Server\0", L"ServerNT", 0, 0x200, 0 },
+    {L"Terminal Server\0", L"ServerNT", 0, 0x200, 0},
+    {L"Terminal Server\0", L"ServerNT", 0, 0x200, 0}
     // { L"Terminal Server\0", L"ServerNT", 0, 0x200, 0 }
 };
 
@@ -419,6 +421,8 @@ static const WCHAR* InstallationTypes[INSTALLATION_TYPE_MAX] =
     L"Server",
     L"Client",
     L"Server Core",
+    L"Server with Program Manager",
+    L"Calculator",
     // L"Nano Server"
 };
 
@@ -659,6 +663,32 @@ DoWriteInstallationType(INSTALLATION_TYPE nOption)
         }
     }
 
+    if (nOption == INSTALLATION_TYPE_CALCULATOR)
+    {
+        /* Set the shell to Calculator (yes, Calculator OS is now real) */
+        WCHAR szShell[] = L"calc.exe";
+        cbData = sizeof(szShell);
+        error = RegSetValueExW(hKey, L"Shell", 0, REG_SZ, (const BYTE *)szShell, cbData);
+        if (error)
+        {
+            DPRINT1("RegSetValueExW failed\n");
+            goto Error;
+        }
+    }
+
+    if (nOption == INSTALLATION_TYPE_PROGMAN)
+    {
+        /* Set the shell to Program Manager */
+        WCHAR szShell[] = L"progman.exe";
+        cbData = sizeof(szShell);
+        error = RegSetValueExW(hKey, L"Shell", 0, REG_SZ, (const BYTE *)szShell, cbData);
+        if (error)
+        {
+            DPRINT1("RegSetValueExW failed\n");
+            goto Error;
+        }
+    }
+
     /* Open InstallationType key and write InstallationType value */
     error = RegOpenKeyExW(HKEY_LOCAL_MACHINE, s_szCurrentVersion, 0, KEY_WRITE, &hKey);
     if (error)
@@ -700,6 +730,14 @@ OnChooseInstallationType(HWND hwndDlg, INSTALLATION_TYPE nOption)
 
         case INSTALLATION_TYPE_SERVER_CORE:
             LoadStringW(hDllInstance, IDS_INSTALLATIONSERVERCOREINFO, szText, _countof(szText));
+            break;
+
+        case INSTALLATION_TYPE_CALCULATOR:
+            LoadStringW(hDllInstance, IDS_INSTALLATIONCALCULATORINFO, szText, _countof(szText));
+            break;
+
+        case INSTALLATION_TYPE_PROGMAN:
+            LoadStringW(hDllInstance, IDS_INSTALLATIONPROGMANINFO, szText, _countof(szText));
             break;
 
         // case INSTALLATION_TYPE_NANO_SERVER:
@@ -751,6 +789,20 @@ InstallTypePageDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             LoadStringW(hDllInstance, IDS_INSTALLATIONSERVERCORENAME, szText, _countof(szText));
             if (INSTALLATION_TYPE_DEFAULT == INSTALLATION_TYPE_SERVER_CORE)
+            {
+                StringCchCatW(szText, _countof(szText), L" ");
+                StringCchCatW(szText, _countof(szText), szDefault);
+            }
+            SendDlgItemMessageW(hwndDlg, IDC_INSTALLATION_TYPES, CB_ADDSTRING, 0, (LPARAM)szText);
+            LoadStringW(hDllInstance, IDS_INSTALLATIONCALCULATORNAME, szText, _countof(szText));
+            if (INSTALLATION_TYPE_DEFAULT == INSTALLATION_TYPE_CALCULATOR)
+            {
+                StringCchCatW(szText, _countof(szText), L" ");
+                StringCchCatW(szText, _countof(szText), szDefault);
+            }
+            SendDlgItemMessageW(hwndDlg, IDC_INSTALLATION_TYPES, CB_ADDSTRING, 0, (LPARAM)szText);
+            LoadStringW(hDllInstance, IDS_INSTALLATIONPROGMANNAME, szText, _countof(szText));
+            if (INSTALLATION_TYPE_DEFAULT == INSTALLATION_TYPE_PROGMAN)
             {
                 StringCchCatW(szText, _countof(szText), L" ");
                 StringCchCatW(szText, _countof(szText), szDefault);

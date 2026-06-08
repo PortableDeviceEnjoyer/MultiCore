@@ -262,12 +262,16 @@ STRINGTABLE
 BEGIN
     IDS_INSTALLATIONTITLE "Installation Type"
     IDS_INSTALLATIONSUBTITLE "Choose an installation type that determines how the system is configured."
-    IDS_INSTALLATIONSERVERNAME "ReactOS Server"
+    IDS_INSTALLATIONSERVERNAME "MultiCore Server Standard"
     IDS_INSTALLATIONSERVERINFO "The system will be recognized as a server. Private folders ""My Pictures"", ""My Videos"" and ""My Music"" are independent from ""My Documents""."
     IDS_INSTALLATIONWORKSTATIONNAME "MultiCore Professional"
     IDS_INSTALLATIONWORKSTATIONINFO "The system will be recognized as a workstation. Private folders ""My Pictures"", ""My Videos"" and ""My Music"" are in ""My Documents""."
-    IDS_INSTALLATIONSERVERCORENAME "ReactOS Server Core"
+    IDS_INSTALLATIONSERVERCORENAME "MultiCore Server Core"
     IDS_INSTALLATIONSERVERCOREINFO "The system will be recognized as a server. The graphical shell is not installed, and the system starts in a command‑line environment to reduce resource usage and attack surface."
+    IDS_INSTALLATIONCALCULATORNAME "Calculator"
+    IDS_INSTALLATIONCALCULATORINFO "Just a calculator. Nothing else."
+    IDS_INSTALLATIONPROGMANNAME "MultiCore Server with Program Manager"
+    IDS_INSTALLATIONPROGMANINFO "The system will be recognized as a server. The graphical shell is set to the Program Manager."
     /* Reserved for future use
      * IDS_INSTALLATIONNANOSERVERNAME "ReactOS Nano Server"
      * IDS_INSTALLATIONNANOSERVERINFO "The system will be recognized as a server. The system is entirely in text mode. You are expected to manage this system remotely."
