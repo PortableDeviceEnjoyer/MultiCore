@@ -256,7 +256,7 @@ BEGIN
     IDS_INSTALLATIONSUBTITLE "Die Auswahl der folgenden Produkte wirkt sich auf das Verhalten des Systems aus."
     IDS_INSTALLATIONSERVERNAME "ReactOS Server"
     IDS_INSTALLATIONSERVERINFO "Das System wird als Server erkannt. Die persönlichen Ordner ""Eigene Bilder"", ""Eigene Videos"" und ""Eigene Musik"" sind unabhängig von ""Eigene Dokumente""."
-    IDS_INSTALLATIONWORKSTATIONNAME "ReactOS Workstation"
+    IDS_INSTALLATIONWORKSTATIONNAME "MultiCore Professional"
     IDS_INSTALLATIONWORKSTATIONINFO "Das System wird als Workstation erkannt. Die persönlichen Ordner ""Eigene Bilder"", ""Eigene Videos"" und ""Eigene Musik"" sind Unterordner von ""Eigene Dokumente""."
     IDS_INSTALLATIONSERVERCORENAME "ReactOS Server Core"
     IDS_INSTALLATIONSERVERCOREINFO "The system will be recognized as a server. The graphical shell is not installed, and the system starts in a command‑line environment to reduce resource usage and attack surface."

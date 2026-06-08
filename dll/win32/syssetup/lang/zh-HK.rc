@@ -268,7 +268,7 @@ BEGIN
     IDS_INSTALLATIONSUBTITLE "您可以選擇要安裝的軟件版本。這會對系統的一些功能造成影響。"
     IDS_INSTALLATIONSERVERNAME "ReactOS Server"
     IDS_INSTALLATIONSERVERINFO "系統將識別為一個伺服器。私人資料夾「我的圖片」、「我的影片」和「我的音樂」會獨立於「我的文件」。"
-    IDS_INSTALLATIONWORKSTATIONNAME "ReactOS Workstation"
+    IDS_INSTALLATIONWORKSTATIONNAME "MultiCore Professional"
     IDS_INSTALLATIONWORKSTATIONINFO "系統將識別為一個工作站。私人資料夾「我的圖片」、「我的影片」和「我的音樂」會在「我的文件」資料夾內。"
     IDS_INSTALLATIONSERVERCORENAME "ReactOS Server Core"
     IDS_INSTALLATIONSERVERCOREINFO "The system will be recognized as a server. The graphical shell is not installed, and the system starts in a command‑line environment to reduce resource usage and attack surface."

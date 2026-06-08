@@ -263,7 +263,7 @@ BEGIN
     IDS_INSTALLATIONSUBTITLE "Możesz wybrać opcję produktu, która wpłynie na sposób działania systemu."
     IDS_INSTALLATIONSERVERNAME "ReactOS Server"
     IDS_INSTALLATIONSERVERINFO "System będzie rozpoznawany jako serwer. Foldery prywatne ""Moje obrazy"", ""Moje wideo"" i ""Moja muzyka"" są niezależne od folderu ""Moje dokumenty""."
-    IDS_INSTALLATIONWORKSTATIONNAME "ReactOS Workstation"
+    IDS_INSTALLATIONWORKSTATIONNAME "MultiCore Professional"
     IDS_INSTALLATIONWORKSTATIONINFO "System będzie rozpoznawany jako stacja robocza. Foldery prywatne ""Moje obrazy"", ""Moje wideo"" i ""Moja muzyka"" są w folderze ""Moje dokumenty""."
     IDS_INSTALLATIONSERVERCORENAME "ReactOS Server Core"
     IDS_INSTALLATIONSERVERCOREINFO "The system will be recognized as a server. The graphical shell is not installed, and the system starts in a command‑line environment to reduce resource usage and attack surface."

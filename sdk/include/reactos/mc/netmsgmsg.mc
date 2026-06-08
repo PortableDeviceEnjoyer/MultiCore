@@ -28255,28 +28255,28 @@ Severity=Success
 Facility=System
 SymbolicName=APPERR2_4697
 Language=English
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Polish
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Romanian
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Russian
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Spanish
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Turkish
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Chinese
-ReactOS Workstation
+MultiCore Professional
 .
 Language=Taiwanese
-ReactOS Workstation
+MultiCore Professional
 .
 
 MessageId=4698

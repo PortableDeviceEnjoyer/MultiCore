@@ -54,7 +54,7 @@ LocaleID = 409
 
 ; Set installation type.
 ; 0 - ReactOS Server
-; 1 - ReactOS Workstation
+; 1 - MultiCore Professional
 ; 2 - ReactOS Server Core
 ; 3 - ReactOS Nano Server (Reserved)
 InstallationType = 0
